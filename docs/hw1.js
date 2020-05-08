@@ -1,6 +1,6 @@
 "use strict";
 
-var shadedSphere4 = function() {
+var HW1 = function() {
 var canvas;
 var gl;
 
@@ -61,37 +61,28 @@ var eye;
 var at = vec3(0.0, 0.0, 0.0);
 var up = vec3(0.0, 1.0, 0.0);
 
-var scaling=1;
-var base_foliage = 0.6/scaling;
-var cap = 0.90/scaling;
-var middle_foliage_height = 0.30/scaling;
-var upper_foliage_height = 0.60/scaling;
+var base_foliage = 0.6;
+var cap = 0.90;
+var middle_foliage_height = 0.30;
+var upper_foliage_height = 0.60;
 
-var tronco = 0.1/scaling;
-var middle_foliage = 0.4/scaling;
-var middle_foliage_cap_offset=0.10/scaling;
-var upper_foliage_cap_offset=0.10/scaling;
-var upper_foliage = 0.2/scaling;
-var base_foliage_up = 0.2/scaling;
-var middle_foliage_up = 0.1/scaling;
+var tronco = 0.1;
+var middle_foliage = 0.4;
+var middle_foliage_cap_offset=0.10;
+var upper_foliage_cap_offset=0.10;
+var upper_foliage = 0.2;
+var base_foliage_up = 0.2;
+var middle_foliage_up = 0.1;
 
 var ba=8;
 var bb=9;
 var bc=10;
 var bd=11;
-var ba_up=21;
-var bb_up=22;
-var bc_up=23;
-var bd_up=24;
 
 var ma=12;
 var mb=13;
 var mc=14;
 var md=15;
-var ma_up=25;
-var mb_up=26;
-var mc_up=27;
-var md_up=28;
 
 
 
@@ -115,7 +106,7 @@ var z_offset=0;
 
 var lower_cap =  21;
 var middle_cap = 22;
-
+var lflag=false;
 
 //                                                                                      ARRAY OF VERTICES
 var vertices = [
@@ -333,14 +324,12 @@ function configureTexture( image ) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB,
          gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.generateMipmap(gl.TEXTURE_2D);
-    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
-     //                 gl.NEAREST_MIPMAP_LINEAR);
-                      
-    gl.texParameteri(gl.TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
+                      gl.NEAREST_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-    gl.uniform1i(gl.getUniformLocation(program, "uTextureMap"), 0);
+    gl.uniform1i(gl.getUniformLocation(program, "uTexMap"), 0);
 }
-
 
 window.onload = function init() {
 
@@ -404,7 +393,11 @@ window.onload = function init() {
 
     configureTexture(image);
 
-    
+    document.getElementById("ButtonL").onclick = function(){
+      lflag = !lflag;
+      gl.uniform1f(gl.getUniformLocation(program,
+         "uLflag"), lflag);
+    };
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
     nMatrixLoc = gl.getUniformLocation(program, "uNormalMatrix");
@@ -542,4 +535,4 @@ function render() {
 
 }
 
-shadedSphere4();
+HW1();
