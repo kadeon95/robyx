@@ -584,7 +584,7 @@ function render() {
     gl.bindTexture(gl.TEXTURE_2D, texture2);
 
 
-	gl.drawArrays(gl.TRIANGLES,0,numPositions);
+	gl.drawArrays(gl.TRIANGLES,numPositions-30 ,30);
 
     requestAnimationFrame(render);
 }
