@@ -38,16 +38,25 @@ var lightAmbient = vec4(0.3, 0.3, 0.3, 1.0);
 var lightDiffuse = vec4(0.1, 0.1, 0.6, 1.0);
 var lightSpecular = vec4(0.1, 0.1, 0.6, 1.0);
 
+var lightAmbient = vec4(0.3, 0.3, 0.3, 1.0);// WHITE
+var lightDiffuse = vec4(0.3, 0.3, 0.3, 1.0);
+
 
 var spotlightPosition = vec4(0, 0, 1.0, 1.0);
 var spotlightAmbient = vec4(0.3, 0.3, 0.3, 1.0);
 var spotlightDiffuse = vec4(0.7, 0.3, 0, 1.0);
 var spotlightSpecular = vec4(0.7, 0.3, 0, 1.0);
 
+var spotlightAmbient = vec4(0.3, 0.3, 0.3, 1.0); // WHITE
+var spotlightDiffuse = vec4(0.3, 0.3, 0.3, 1.0);
 
-var materialAmbient = vec4(0.1, 0.5, 0.1, 1.0);
+
+var materialAmbient = vec4(0.1, 0.5, 0.1, 1.0);  
 var materialDiffuse = vec4(0.1, 0.6, 0.1, 1.0);
 var materialSpecular = vec4(0.1, 0.5, 0.1, 1.0);
+
+var materialAmbient = vec4(0.3, 0.3, 0.3, 1.0);  // WHITE
+var materialDiffuse = vec4(0.3, 0.3, 0.3, 1.0);
 var materialShininess = 10.0;
 
 var ctm;
@@ -100,7 +109,7 @@ var tronco_u_a = 4;
 var tronco_u_b = 5;
 var tronco_u_c = 6;
 var tronco_u_d = 7;
-var z_offset=0;
+var z_offset=0.3;
 
 
 
@@ -147,6 +156,14 @@ var texCoord = [
     vec2(1, 1),
     vec2(1, 0)
 ];
+
+var texCoord = [
+    vec2(0, 0),
+    vec2(0, 0.3),
+    vec2(1, 0.3),
+    vec2(1, 0)
+];
+
 
 
 var brown=	vec4(0.45,0.16,0.20, 1.0)
@@ -324,10 +341,11 @@ function configureTexture( image ) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB,
          gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.generateMipmap(gl.TEXTURE_2D);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
-                      gl.NEAREST_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
+    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
+      //                gl.NEAREST_MIPMAP_LINEAR);
+    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT );
     gl.uniform1i(gl.getUniformLocation(program, "uTexMap"), 0);
 }
 
@@ -388,8 +406,16 @@ window.onload = function init() {
     gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(texCoordLoc);
     
+
+
+    document.getElementById("ButtonL").onclick = function(){
+      lflag = !lflag;
+      gl.uniform1f(gl.getUniformLocation(program,
+         "uLflag"), lflag);
+    };
+    
 	// INITIALIZE THE TEXTURE. IN THIS CASE WE TAKE IT FROM THE HTML FILE.
-    var image = document.getElementById("texImage");
+    var image = document.getElementById("texImageFoliage");
 
     configureTexture(image);
 
@@ -398,6 +424,7 @@ window.onload = function init() {
       gl.uniform1f(gl.getUniformLocation(program,
          "uLflag"), lflag);
     };
+    
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
     nMatrixLoc = gl.getUniformLocation(program, "uNormalMatrix");
@@ -495,7 +522,7 @@ window.onload = function init() {
     // Global light product
     gl.uniform4fv( gl.getUniformLocation(program,
        "uGlobalAmbientProduct"),flatten(globalAmbientProduct));
-    
+
     // This parameter is "alone"
     gl.uniform1f( gl.getUniformLocation(program,
        "uShininess"),materialShininess);
@@ -503,7 +530,7 @@ window.onload = function init() {
     render();
 }
 
-
+var image;
 function render() {
 
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -528,6 +555,18 @@ function render() {
        
     gl.uniform1f( gl.getUniformLocation(program,
        "u_limit"),Math.cos(u_limit));      
+       
+	// INITIALIZE THE TEXTURE. IN THIS CASE WE TAKE IT FROM THE HTML FILE.
+    image = document.getElementById("texImageFoliage");
+
+    configureTexture(image);
+    console.log(numPositions);
+	gl.drawArrays(gl.TRIANGLES,0,numPositions-30);
+	
+	// INITIALIZE THE TEXTURE. IN THIS CASE WE TAKE IT FROM THE HTML FILE.
+    image = document.getElementById("texImage");
+
+    configureTexture(image);
 	gl.drawArrays(gl.TRIANGLES,0,numPositions);
 
     requestAnimationFrame(render);
