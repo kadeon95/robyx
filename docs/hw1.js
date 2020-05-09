@@ -332,8 +332,22 @@ var uPositionLoc;
 var program;
 var u_limit;
 var spotlightDirection = vec4(0, 0, -1, 0) ;
-var texture;
+var texture, texture2;
 
+
+function configureTexture2( image ) {
+    texture2 = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture2);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB,
+         gl.RGB, gl.UNSIGNED_BYTE, image);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
+      //                gl.NEAREST_MIPMAP_LINEAR);
+    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT );
+    gl.uniform1i(gl.getUniformLocation(program, "uTexMap"), 0);
+}
 
 function configureTexture( image ) {
     texture = gl.createTexture();
@@ -418,7 +432,11 @@ window.onload = function init() {
     var image = document.getElementById("texImageFoliage");
 
     configureTexture(image);
+    
+    image = document.getElementById("texImage");
 
+    configureTexture2(image);
+    
     document.getElementById("ButtonL").onclick = function(){
       lflag = !lflag;
       gl.uniform1f(gl.getUniformLocation(program,
@@ -557,16 +575,15 @@ function render() {
        "u_limit"),Math.cos(u_limit));      
        
 	// INITIALIZE THE TEXTURE. IN THIS CASE WE TAKE IT FROM THE HTML FILE.
-    image = document.getElementById("texImageFoliage");
+    gl.bindTexture(gl.TEXTURE_2D, texture);
 
-    configureTexture(image);
     console.log(numPositions);
 	gl.drawArrays(gl.TRIANGLES,0,numPositions-30);
-	
-	// INITIALIZE THE TEXTURE. IN THIS CASE WE TAKE IT FROM THE HTML FILE.
-    image = document.getElementById("texImage");
 
-    configureTexture(image);
+	// INITIALIZE THE TEXTURE. IN THIS CASE WE TAKE IT FROM THE HTML FILE.
+    gl.bindTexture(gl.TEXTURE_2D, texture2);
+
+
 	gl.drawArrays(gl.TRIANGLES,0,numPositions);
 
     requestAnimationFrame(render);
